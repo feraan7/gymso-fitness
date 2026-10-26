@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Gymso Fitness | Build Your Best Self</title>
+    <meta name="description"
+        content="Push your limits, build strength, and achieve your fitness goals with expert coaching, state-of-the-art facilities, and structured training programs at Gymso Fitness.">
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js" defer></script>
+    <script src="./node_modules/animejs/dist/bundles/anime.umd.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/animejs@4/dist/bundles/anime.umd.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js" defer></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="./output.css">
+
+    <style>
+        /* Top Scroll Progress Bar */
+        #scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            width: 0%;
+            background: linear-gradient(90deg, #a3e635, #34d399, #38bdf8);
+            box-shadow: 0 0 14px rgba(163, 230, 53, 0.9);
+            z-index: 99999;
+            transition: width 0.05s ease-out;
+            pointer-events: none;
+        }
+
+        /* Luxury Magnetic Custom Cursor */
+        @media (hover: hover) and (pointer: fine) {
+            #cursor-dot {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 8px;
+                height: 8px;
+                background-color: #a3e635;
+                border-radius: 50%;
+                pointer-events: none;
+                z-index: 99999;
+                transform: translate(-50%, -50%);
+                transition: opacity 0.3s ease, transform 0.1s ease;
+                box-shadow: 0 0 12px #a3e635;
+            }
+
+            #cursor-ring {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 36px;
+                height: 36px;
+                border: 1.5px solid rgba(163, 230, 53, 0.6);
+                border-radius: 50%;
+                pointer-events: none;
+                z-index: 99998;
+                transform: translate(-50%, -50%);
+                transition: width 0.25s cubic-bezier(0.2, 0, 0, 1), height 0.25s cubic-bezier(0.2, 0, 0, 1), border-color 0.2s, background-color 0.2s, opacity 0.3s ease;
+            }
+
+            #cursor-ring.active-hover {
+                width: 58px;
+                height: 58px;
+                background-color: rgba(163, 230, 53, 0.15);
+                border-color: #a3e635;
+                backdrop-filter: blur(1px);
+            }
+        }
+
+        /* 3D Tilt & Cursor Spotlight on Cards */
+        .spotlight-card {
+            position: relative;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            transition: transform 0.18s cubic-bezier(0.25, 0.46, 0.45, 0.94), border-color 0.3s ease, box-shadow 0.3s ease;
+            will-change: transform;
+        }
+
+        .spotlight-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: radial-gradient(450px circle at var(--mouse-x, -9999px) var(--mouse-y, -9999px), rgba(163, 230, 53, 0.18), transparent 50%);
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .spotlight-card:hover::before {
+            opacity: 1;
+        }
+
+        /* ECG Waveform Pulse */
+        .ecg-path {
+            stroke-dasharray: 200;
+            stroke-dashoffset: 200;
+            animation: ecg-sweep 2s linear infinite;
+        }
+
+        @keyframes ecg-sweep {
+            0% {
+                stroke-dashoffset: 200;
+                opacity: 0.3;
+            }
+            30% {
+                opacity: 1;
+            }
+            70% {
+                opacity: 1;
+            }
+            100% {
+                stroke-dashoffset: -200;
+                opacity: 0.3;
+            }
+        }
+
+        /* Kinetic Glowing Text */
+        .kinetic-glow {
+            text-shadow: 0 0 20px rgba(163, 230, 53, 0.45), 0 0 45px rgba(163, 230, 53, 0.25);
+        }
+
+        /* Click Ripple Shockwave */
+        .click-ripple {
+            position: fixed;
+            border-radius: 50%;
+            border: 2px solid #a3e635;
+            pointer-events: none;
+            transform: translate(-50%, -50%) scale(0);
+            animation: ripple-shock 0.6s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+            z-index: 99990;
+        }
+
+        @keyframes ripple-shock {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0.9;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(3.5);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-slate-950 font-sans text-slate-100 antialiased selection:bg-lime-400 selection:text-black">
+
+    <!-- SCROLL PROGRESS BAR -->
+    <div id="scroll-progress"></div>
+
+    <!-- LUXURY MAGNETIC CURSOR -->
+    <div id="cursor-dot"></div>
+    <div id="cursor-ring"></div>
+
+    <!-- STICKY FROSTED NAVIGATION -->
+    <header
+        class="sticky top-0 z-50 w-full border-b border-white/10 bg-slate-950/85 backdrop-blur-md transition-colors duration-200">
+        <nav class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-12"
+            aria-label="Main Navigation">
+
+            <a href="#home"
+                class="font-heading text-3xl font-extrabold uppercase tracking-wide text-white transition hover:opacity-90">
+                Gymso<span class="text-lime-400">.</span>
+            </a>
+
+            <!-- Desktop Navigation Links -->
+            <div class="hidden items-center gap-8 text-sm font-semibold uppercase tracking-wider md:flex">
+                <a href="#home" class="text-lime-400 transition hover:text-white">Home</a>
+                <a href="#about" class="text-slate-300 transition hover:text-lime-400">About</a>
+                <a href="#classes" class="text-slate-300 transition hover:text-lime-400">Classes</a>
+                <a href="#trainers" class="text-slate-300 transition hover:text-lime-400">Trainers</a>
+                <a href="#membership" class="text-slate-300 transition hover:text-lime-400">Membership</a>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <a href="#contact"
+                    class="magnetic-btn hidden border border-lime-400 bg-lime-400/10 px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-lime-400 transition duration-200 hover:bg-lime-400 hover:text-black sm:inline-block">
+                    Join Now
+                </a>
+
+                <!-- Mobile Hamburger Button -->
+                <button type="button" id="menu-toggle"
+                    class="inline-flex p-2 text-slate-300 transition hover:text-white md:hidden" aria-expanded="false"
+                    aria-controls="mobile-menu" aria-label="Toggle navigation menu">
+                    <svg id="menu-icon-open" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                    <svg id="menu-icon-close" class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+        </nav>
+
+        <!-- Mobile Dropdown Menu -->
+        <div id="mobile-menu" class="hidden border-b border-white/10 bg-slate-900/95 p-6 md:hidden">
+            <div class="flex flex-col gap-4 text-sm font-semibold uppercase tracking-wider">
+                <a href="#home" class="text-lime-400 transition hover:text-white">Home</a>
+                <a href="#about" class="text-slate-300 transition hover:text-lime-400">About</a>
+                <a href="#classes" class="text-slate-300 transition hover:text-lime-400">Classes</a>
+                <a href="#trainers" class="text-slate-300 transition hover:text-lime-400">Trainers</a>
+                <a href="#membership" class="text-slate-300 transition hover:text-lime-400">Membership</a>
+                <a href="#contact"
+                    class="mt-2 inline-block border border-lime-400 py-3 text-center text-xs font-bold uppercase tracking-wider text-lime-400">
+                    Join Now
+                </a>
+            </div>
+        </div>
+    </header>
+
+
+    <main>
+
+        <!-- HERO SECTION -->
+        <section id="home" class="relative flex min-h-[92vh] items-center bg-cover bg-center overflow-hidden"
+            style="background-image: url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=2000&q=85');">
+
+            <!-- Cinematic Gradient Overlay -->
+            <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent"></div>
+            <div class="absolute inset-0 bg-slate-950/40"></div>
+
+            <!-- Kinetic Energy Particle Canvas -->
+            <canvas id="hero-particles" class="pointer-events-none absolute inset-0 z-0 opacity-70"></canvas>
+
+            <div class="relative z-10 mx-auto w-full max-w-7xl px-6 py-28 lg:px-12 lg:py-36">
+
+                <!-- Live Pulse Radar Badge -->
+                <div class="hero-badge mb-6 inline-flex items-center gap-2.5 border border-lime-400/40 bg-lime-400/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-lime-400 backdrop-blur-md">
+                    <span class="relative flex h-2 w-2">
+                        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-lime-400 opacity-75"></span>
+                        <span class="relative inline-flex h-2 w-2 rounded-full bg-lime-400"></span>
+                    </span>
+                    Next-Gen Fitness Experience
+                </div>
+
+                <h1
+                    class="hero-title max-w-4xl font-heading text-6xl font-black uppercase tracking-tight text-white sm:text-8xl lg:text-9xl">
+                    <span class="hero-line block overflow-hidden"><span class="hero-word inline-block">Build</span> <span class="hero-word inline-block">Your</span></span>
+                    <span class="hero-line block overflow-hidden text-lime-400 kinetic-glow"><span class="hero-word inline-block">Best</span> <span class="hero-word inline-block">Self.</span></span>
+                </h1>
+
+                <p class="hero-description mt-8 max-w-xl text-lg leading-relaxed text-slate-300">
+                    Push your limits, build functional strength, and elevate your standard of living with progressive
+                    training programs engineered for real results.
+                </p>
+
+                <div class="mt-10 flex flex-wrap items-center gap-4">
+                    <a href="#classes"
+                        class="hero-button magnetic-btn bg-lime-400 px-8 py-4 text-sm font-bold uppercase tracking-wider text-black transition duration-200 hover:bg-white shadow-[0_0_20px_rgba(163,230,53,0.3)]">
+                        Explore Classes
+                    </a>
+
+                    <a href="#about"
+                        class="hero-button magnetic-btn border border-white/40 px-8 py-4 text-sm font-bold uppercase tracking-wider text-white transition duration-200 hover:border-lime-400 hover:text-lime-400">
+                        Discover More
+                    </a>
+                </div>
+
+                <!-- Inset Performance Metrics Panel -->
+                <div class="relative mt-16 max-w-3xl overflow-hidden border border-white/15 bg-slate-950/75 p-6 backdrop-blur-md sm:p-8">
+                    <!-- Subtle background pulse glow -->
+                    <div id="metrics-pulse-glow" class="pointer-events-none absolute -right-20 -bottom-20 h-48 w-48 rounded-full bg-lime-500/10 blur-3xl transition-all duration-700"></div>
+
+                    <div class="grid grid-cols-2 gap-6 sm:grid-cols-4 sm:gap-6 items-center">
+                        <div>
+                            <p class="font-heading text-4xl font-extrabold text-lime-400 sm:text-5xl">24/7</p>
+                            <p class="mt-1 text-xs font-semibold uppercase tracking-widest text-slate-400">Facility Access</p>
+                        </div>
+
+                        <div>
+                            <p class="font-heading text-4xl font-extrabold text-white sm:text-5xl"><span id="counter-classes">0</span>+</p>
+                            <p class="mt-1 text-xs font-semibold uppercase tracking-widest text-slate-400">Weekly Classes</p>
+                        </div>
+
+                        <div>
+                            <p class="font-heading text-4xl font-extrabold text-white sm:text-5xl"><span id="counter-coached">0</span>%</p>
+                            <p class="mt-1 text-xs font-semibold uppercase tracking-widest text-slate-400">Coached Programs</p>
+                        </div>
+
+                        <!-- Live ECG Heart Rate Monitor -->
+                        <div class="col-span-2 sm:col-span-1 border-t sm:border-t-0 sm:border-l border-white/10 pt-4 sm:pt-0 sm:pl-6">
+                            <div class="flex items-center justify-between sm:justify-start gap-2">
+                                <span class="text-xs font-bold uppercase tracking-wider text-lime-400 flex items-center gap-1.5">
+                                    <svg class="h-3.5 w-3.5 text-lime-400 animate-pulse" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                                    Live BPM
+                                </span>
+                                <button id="boost-btn" type="button" title="Test Kinetic Energy Spike" class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 border border-lime-400/40 text-lime-400 hover:bg-lime-400 hover:text-black transition duration-200">
+                                    Boost ⚡
+                                </button>
+                            </div>
+                            <div class="mt-1 flex items-baseline gap-2">
+                                <span id="live-bpm" class="font-heading text-3xl font-extrabold text-white">138</span>
+                                <span class="text-[10px] uppercase tracking-widest text-slate-400">Zone 4 Peak</span>
+                            </div>
+                            <!-- Animated SVG ECG Waveform -->
+                            <div class="mt-1.5 h-6 w-full overflow-hidden">
+                                <svg class="h-full w-full" viewBox="0 0 200 30" fill="none">
+                                    <path class="ecg-path" d="M0,15 L40,15 L48,5 L54,25 L60,2 L66,22 L72,15 L110,15 L118,5 L124,25 L130,2 L136,22 L142,15 L200,15" stroke="#a3e635" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ABOUT SECTION -->
+        <section id="about" class="bg-white px-6 py-24 text-slate-900 sm:py-32 lg:px-12">
+            <div class="mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-2">
+
+                <div>
+                    <h2
+                        class="font-heading text-5xl font-extrabold uppercase leading-none tracking-tight sm:text-6xl lg:text-7xl">
+                        Strong Body.<br>
+                        <span class="text-lime-600">Stronger Mind.</span>
+                    </h2>
+
+                    <p class="mt-8 text-base leading-relaxed text-slate-600 sm:text-lg">
+                        At Gymso Fitness, training goes far beyond moving iron. It is an intentional pursuit of
+                        discipline, resilience, and daily self-mastery.
+                    </p>
+
+                    <p class="mt-4 text-base leading-relaxed text-slate-600">
+                        Whether you are starting day one or training for competition, our expert coaches guide your
+                        mechanics, optimize your recovery, and keep you progressing safely.
+                    </p>
+
+                    <div class="mt-8 flex flex-wrap gap-4">
+                        <a href="#membership"
+                            class="inline-block bg-slate-950 px-8 py-4 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-lime-500 hover:text-black">
+                            Become a Member
+                        </a>
+                    </div>
+                </div>
+
+                <div class="relative">
+                    <img src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=1000&q=85"
+                        alt="Athlete training with barbell" class="h-[440px] w-full object-cover shadow-xl sm:h-[520px]"
+                        loading="lazy">
+
+                    <div class="absolute -bottom-6 -left-4 bg-slate-950 p-6 text-white shadow-2xl sm:-left-6 sm:p-8">
+                        <p class="font-heading text-5xl font-black text-lime-400">100%</p>
+                        <p class="mt-1 text-xs font-bold uppercase tracking-widest text-slate-300">Dedicated Coaching
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- CLASSES SECTION -->
+        <section id="classes" class="bg-slate-950 px-6 py-24 sm:py-32 lg:px-12">
+            <div class="mx-auto max-w-7xl">
+
+                <div class="mb-10">
+                    <h2
+                        class="font-heading text-5xl font-extrabold uppercase tracking-tight text-white sm:text-6xl lg:text-7xl">
+                        Fitness Classes
+                    </h2>
+                    <p class="mt-4 max-w-2xl text-base leading-relaxed text-slate-400">
+                        Targeted training environments designed for strength progression, high-output conditioning, and
+                        individual performance.
+                    </p>
+                </div>
+
+                <!-- Classes Filter Tabs with Interactive Sliding Pill -->
+                <div class="mb-12 flex flex-wrap items-center gap-2 border-b border-white/10 pb-4">
+                    <button type="button" class="class-filter-btn active border border-lime-400 bg-lime-400 px-5 py-2 text-xs font-bold uppercase tracking-wider text-black transition duration-200" data-filter="all">All Classes</button>
+                    <button type="button" class="class-filter-btn border border-transparent px-5 py-2 text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-white transition duration-200" data-filter="strength">Strength</button>
+                    <button type="button" class="class-filter-btn border border-transparent px-5 py-2 text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-white transition duration-200" data-filter="conditioning">Conditioning</button>
+                    <button type="button" class="class-filter-btn border border-transparent px-5 py-2 text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-white transition duration-200" data-filter="coaching">Personal Coaching</button>
+                </div>
+
+                <div id="classes-grid" class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+
+                    <!-- Card 1 -->
+                    <article
+                        class="anime-card spotlight-card group relative flex flex-col overflow-hidden border border-white/10 bg-slate-900 transition duration-300 hover:border-lime-400/50" data-category="strength">
+                        <div class="overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=85"
+                                alt="Barbells and plates in strength training zone"
+                                class="h-64 w-full object-cover transition duration-500 group-hover:scale-105"
+                                loading="lazy">
+                        </div>
+
+                        <div class="flex flex-1 flex-col justify-between p-8">
+                            <div>
+                                <span
+                                    class="inline-block bg-lime-400/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-lime-400">
+                                    Resistance & Hypertrophy
+                                </span>
+                                <h3 class="mt-4 font-heading text-3xl font-bold uppercase text-white">Weight Training
+                                </h3>
+                                <p class="mt-3 text-sm leading-relaxed text-slate-400">
+                                    Progressive compound movements, free weights, and targeted hypertrophy protocols to
+                                    build durable athletic power.
+                                </p>
+                            </div>
+
+                            <a href="#contact"
+                                class="mt-8 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-lime-400 hover:text-white">
+                                <span>Join Session</span>
+                                <svg class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                </svg>
+                            </a>
+                        </div>
+                    </article>
+
+                    <!-- Card 2 -->
+                    <article
+                        class="anime-card spotlight-card group relative flex flex-col overflow-hidden border border-white/10 bg-slate-900 transition duration-300 hover:border-lime-400/50" data-category="conditioning">
+                        <div class="overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=800&q=85"
+                                alt="Athletes performing high intensity cardio training"
+                                class="h-64 w-full object-cover transition duration-500 group-hover:scale-105"
+                                loading="lazy">
+                        </div>
+
+                        <div class="flex flex-1 flex-col justify-between p-8">
+                            <div>
+                                <span
+                                    class="inline-block bg-lime-400/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-lime-400">
+                                    Aerobic & Anaerobic
+                                </span>
+                                <h3 class="mt-4 font-heading text-3xl font-bold uppercase text-white">Cardio
+                                    Conditioning</h3>
+                                <p class="mt-3 text-sm leading-relaxed text-slate-400">
+                                    Interval training, sled work, and rowing blocks engineered to increase
+                                    cardiovascular capacity and stamina.
+                                </p>
+                            </div>
+
+                            <a href="#contact"
+                                class="mt-8 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-lime-400 hover:text-white">
+                                <span>Join Session</span>
+                                <svg class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                </svg>
+                            </a>
+                        </div>
+                    </article>
+
+                    <!-- Card 3 -->
+                    <article
+                        class="anime-card spotlight-card group relative flex flex-col overflow-hidden border border-white/10 bg-slate-900 transition duration-300 hover:border-lime-400/50" data-category="coaching">
+                        <div class="overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=800&q=85"
+                                alt="Coach working one-on-one with client"
+                                class="h-64 w-full object-cover transition duration-500 group-hover:scale-105"
+                                loading="lazy">
+                        </div>
+
+                        <div class="flex flex-1 flex-col justify-between p-8">
+                            <div>
+                                <span
+                                    class="inline-block bg-lime-400/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-lime-400">
+                                    1-on-1 Mentorship
+                                </span>
+                                <h3 class="mt-4 font-heading text-3xl font-bold uppercase text-white">Personal Coaching
+                                </h3>
+                                <p class="mt-3 text-sm leading-relaxed text-slate-400">
+                                    Bespoke periodized programming, biomechanics screen, and nutritional accountability
+                                    customized to your body.
+                                </p>
+                            </div>
+
+                            <a href="#contact"
+                                class="mt-8 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-lime-400 hover:text-white">
+                                <span>Join Session</span>
+                                <svg class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                </svg>
+                            </a>
+                        </div>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- TRAINERS SECTION -->
+        <section id="trainers" class="bg-white px-6 py-24 text-slate-900 sm:py-32 lg:px-12">
+            <div class="mx-auto max-w-7xl">
+
+                <div class="mb-16">
+                    <h2 class="font-heading text-5xl font-extrabold uppercase tracking-tight sm:text-6xl lg:text-7xl">
+                        Coaching Staff
+                    </h2>
+                    <p class="mt-4 max-w-2xl text-base leading-relaxed text-slate-600">
+                        Certified performance coaches committed to technical excellence, injury prevention, and
+                        continuous athlete development.
+                    </p>
+                </div>
+
+                <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+
+                    <!-- Trainer 1 -->
+                    <article
+                        class="anime-card spotlight-card group overflow-hidden border border-slate-200 bg-slate-50 transition duration-300 hover:shadow-xl">
+                        <div class="overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1567013127542-490d757e51fc?auto=format&fit=crop&w=800&q=85"
+                                alt="Alex Morgan, Strength & Conditioning Coach"
+                                class="h-80 w-full object-cover transition duration-500 group-hover:scale-105"
+                                loading="lazy">
+                        </div>
+
+                        <div class="p-8">
+                            <span class="text-xs font-bold uppercase tracking-widest text-lime-700">CSCS
+                                Certified</span>
+                            <h3 class="mt-2 font-heading text-3xl font-bold uppercase text-slate-950">Alex Morgan</h3>
+                            <p class="mt-3 text-sm leading-relaxed text-slate-600">
+                                Olympic weightlifting specialist specializing in kinetic chain mechanics and power
+                                development.
+                            </p>
+                        </div>
+                    </article>
+
+                    <!-- Trainer 2 -->
+                    <article
+                        class="anime-card spotlight-card group overflow-hidden border border-slate-200 bg-slate-50 transition duration-300 hover:shadow-xl">
+                        <div class="overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=85"
+                                alt="Ryan Carter, Conditioning & Metabolic Specialist"
+                                class="h-80 w-full object-cover transition duration-500 group-hover:scale-105"
+                                loading="lazy">
+                        </div>
+
+                        <div class="p-8">
+                            <span class="text-xs font-bold uppercase tracking-widest text-lime-700">Metabolic
+                                Lead</span>
+                            <h3 class="mt-2 font-heading text-3xl font-bold uppercase text-slate-950">Ryan Carter</h3>
+                            <p class="mt-3 text-sm leading-relaxed text-slate-600">
+                                Focuses on energy system conditioning, high-density circuits, and building sustainable
+                                cardiovascular work capacity.
+                            </p>
+                        </div>
+                    </article>
+
+                    <!-- Trainer 3 -->
+                    <article
+                        class="anime-card spotlight-card group overflow-hidden border border-slate-200 bg-slate-50 transition duration-300 hover:shadow-xl">
+                        <div class="overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=800&q=85"
+                                alt="Jordan Lee, Functional Mobility & Rehab Coach"
+                                class="h-80 w-full object-cover transition duration-500 group-hover:scale-105"
+                                loading="lazy">
+                        </div>
+
+                        <div class="p-8">
+                            <span class="text-xs font-bold uppercase tracking-widest text-lime-700">Mobility &
+                                Longevity</span>
+                            <h3 class="mt-2 font-heading text-3xl font-bold uppercase text-slate-950">Jordan Lee</h3>
+                            <p class="mt-3 text-sm leading-relaxed text-slate-600">
+                                Integrates corrective movement screens, active mobility work, and structural balance for
+                                long-term health.
+                            </p>
+                        </div>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- MEMBERSHIP SECTION (HIGH CONTRAST & CLEAR TIERS) -->
+        <section id="membership" class="border-t border-white/10 bg-slate-950 px-6 py-24 sm:py-32 lg:px-12">
+            <div class="mx-auto max-w-7xl">
+
+                <div class="mb-12 text-center">
+                    <h2
+                        class="font-heading text-5xl font-extrabold uppercase tracking-tight text-white sm:text-6xl lg:text-7xl">
+                        Membership Tiers
+                    </h2>
+                    <p class="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-400">
+                        Transparent, contract-free plans structured around your training frequency and coaching support.
+                    </p>
+
+                    <!-- Interactive Billing Switcher -->
+                    <div class="mt-8 flex items-center justify-center gap-4">
+                        <button type="button" id="btn-monthly" class="text-xs font-bold uppercase tracking-wider text-lime-400 transition">Monthly</button>
+                        <button type="button" id="billing-toggle" class="relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-slate-800 p-0.5 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-lime-400" role="switch" aria-checked="false">
+                            <span id="toggle-knob" class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-lime-400 shadow ring-0 transition duration-200 ease-in-out translate-x-0"></span>
+                        </button>
+                        <div class="flex items-center gap-2">
+                            <button type="button" id="btn-annual" class="text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-white transition">Annual</button>
+                            <span class="rounded-full bg-lime-400/20 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-lime-400 animate-pulse">Save 20%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid items-stretch gap-8 md:grid-cols-3">
+
+                    <!-- Tier: Basic -->
+                    <article
+                        class="anime-card spotlight-card flex flex-col justify-between border border-white/10 bg-slate-900 p-8 transition duration-300 hover:border-white/30 sm:p-10">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Foundation</span>
+                            <h3 class="mt-3 font-heading text-3xl font-bold uppercase text-white">Basic Access</h3>
+
+                            <div class="mt-6 flex items-baseline">
+                                <span id="price-basic" class="font-heading text-5xl font-extrabold text-white">₹999</span>
+                                <span class="ml-2 text-sm text-slate-400">/ month</span>
+                            </div>
+
+                            <div class="my-8 border-t border-white/10"></div>
+
+                            <ul class="space-y-4 text-sm text-slate-300">
+                                <li class="flex items-center gap-3">
+                                    <svg class="h-5 w-5 shrink-0 text-lime-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    <span>24/7 Gym Floor Access</span>
+                                </li>
+                                <li class="flex items-center gap-3">
+                                    <svg class="h-5 w-5 shrink-0 text-lime-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    <span>Locker Room & Shower Access</span>
+                                </li>
+                                <li class="flex items-center gap-3">
+                                    <svg class="h-5 w-5 shrink-0 text-lime-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    <span>Free Fitness Assessment</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <a href="#contact"
+                            class="mt-10 block border border-white/30 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-white transition hover:border-white hover:bg-white hover:text-black">
+                            Select Basic
+                        </a>
+                    </article>
+
+                    <!-- Tier: Premium (Hero Card) -->
+                    <article
+                        class="anime-card spotlight-card relative flex flex-col justify-between border-2 border-lime-400 bg-slate-900 p-8 shadow-2xl transition duration-300 sm:p-10">
+                        <div
+                            class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-lime-400 px-4 py-1 text-xs font-black uppercase tracking-widest text-black">
+                            Recommended
+                        </div>
+
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-widest text-lime-400">Most Popular</span>
+                            <h3 class="mt-3 font-heading text-3xl font-bold uppercase text-white">Full Athlete</h3>
+
+                            <div class="mt-6 flex items-baseline">
+                                <span id="price-athlete" class="font-heading text-5xl font-extrabold text-white">₹1,999</span>
+                                <span class="ml-2 text-sm text-slate-400">/ month</span>
+                            </div>
+
+                            <div class="my-8 border-t border-white/10"></div>
+
+                            <ul class="space-y-4 text-sm text-slate-300">
+                                <li class="flex items-center gap-3">
+                                    <svg class="h-5 w-5 shrink-0 text-lime-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    <span class="font-medium text-white">All Basic Access features</span>
+                                </li>
+                                <li class="flex items-center gap-3">
+                                    <svg class="h-5 w-5 shrink-0 text-lime-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    <span>Unlimited Group Fitness Classes</span>
+                                </li>
+                                <li class="flex items-center gap-3">
+                                    <svg class="h-5 w-5 shrink-0 text-lime-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    <span>Structured Training App Access</span>
+                                </li>
+                                <li class="flex items-center gap-3">
+                                    <svg class="h-5 w-5 shrink-0 text-lime-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    <span>Monthly Progress Check-In</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <a href="#contact"
+                            class="mt-10 block bg-lime-400 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-black transition hover:bg-white">
+                            Select Full Athlete
+                        </a>
+                    </article>
+
+                    <!-- Tier: Elite -->
+                    <article
+                        class="anime-card spotlight-card flex flex-col justify-between border border-white/10 bg-slate-900 p-8 transition duration-300 hover:border-white/20 sm:p-10">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Bespoke</span>
+                            <h3 class="mt-3 font-heading text-3xl font-bold uppercase text-white">Elite Coaching</h3>
+
+                            <div class="mt-6 flex items-baseline">
+                                <span id="price-elite" class="font-heading text-5xl font-extrabold text-white">₹3,499</span>
+                                <span class="ml-2 text-sm text-slate-400">/ month</span>
+                            </div>
+
+                            <div class="my-8 border-t border-white/10"></div>
+
+                            <ul class="space-y-4 text-sm text-slate-300">
+                                <li class="flex items-center gap-3">
+                                    <svg class="h-5 w-5 shrink-0 text-lime-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    <span class="font-medium text-white">All Athlete Tier features</span>
+                                </li>
+                                <li class="flex items-center gap-3">
+                                    <svg class="h-5 w-5 shrink-0 text-lime-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    <span>4x Monthly 1-on-1 PT Sessions</span>
+                                </li>
+                                <li class="flex items-center gap-3">
+                                    <svg class="h-5 w-5 shrink-0 text-lime-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    <span>Personal Nutrition Coaching</span>
+                                </li>
+                                <li class="flex items-center gap-3">
+                                    <svg class="h-5 w-5 shrink-0 text-lime-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    <span>Priority Class Bookings</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <a href="#contact"
+                            class="mt-10 block border border-white/30 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-white transition hover:border-white hover:bg-white hover:text-black">
+                            Select Elite
+                        </a>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- CONTACT SECTION -->
+        <section id="contact" class="bg-slate-950 px-6 py-24 sm:py-32 lg:px-12">
+            <div class="mx-auto grid max-w-7xl gap-14 lg:grid-cols-2">
+
+                <div>
+                    <h2
+                        class="font-heading text-5xl font-extrabold uppercase leading-none tracking-tight text-white sm:text-6xl lg:text-7xl">
+                        Start Your<br>
+                        <span class="text-lime-400">Fitness Journey.</span>
+                    </h2>
+
+                    <p class="mt-8 max-w-lg text-base leading-relaxed text-slate-400">
+                        Questions regarding schedules, coaching availability, or custom corporate packages? Reach out to
+                        our front desk team.
+                    </p>
+
+                    <div class="mt-12 space-y-8">
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="flex h-10 w-10 shrink-0 items-center justify-center border border-white/10 bg-slate-900 text-lime-400">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold uppercase tracking-widest text-lime-400">Location</p>
+                                <p class="mt-1 text-sm text-slate-300">MG Road, Central Fitness Hub, Kochi, Kerala</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="flex h-10 w-10 shrink-0 items-center justify-center border border-white/10 bg-slate-900 text-lime-400">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold uppercase tracking-widest text-lime-400">Operating Hours</p>
+                                <p class="mt-1 text-sm text-slate-300">Monday – Saturday: 5:30 AM – 10:30 PM &bull;
+                                    Sunday: 7:00 AM – 2:00 PM</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="flex h-10 w-10 shrink-0 items-center justify-center border border-white/10 bg-slate-900 text-lime-400">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold uppercase tracking-widest text-lime-400">Direct Inquiries
+                                </p>
+                                <a href="mailto:contact@gymsofitness.com"
+                                    class="mt-1 block text-sm text-slate-300 transition hover:text-lime-400">
+                                    contact@gymsofitness.com
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inset Contact Card -->
+                <div class="border border-white/10 bg-slate-900 p-8 sm:p-10">
+                    <h3 class="font-heading text-3xl font-bold uppercase tracking-wide text-white">
+                        Drop a Message
+                    </h3>
+                    <p class="mt-2 text-sm text-slate-400">
+                        We respond within 24 hours with schedule details.
+                    </p>
+
+                    <form action="mailto:contact@gymsofitness.com" method="post" enctype="text/plain"
+                        class="mt-8 space-y-6">
+
+                        <div>
+                            <label for="name"
+                                class="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-300">Full
+                                Name</label>
+                            <input id="name" name="name" type="text" placeholder="e.g. Rahul Sharma" required
+                                autocomplete="name"
+                                class="w-full border border-white/15 bg-slate-950 px-4 py-3.5 text-sm text-white placeholder-slate-400 transition duration-150 focus:border-lime-400 focus:outline-none focus:ring-1 focus:ring-lime-400">
+                        </div>
+
+                        <div>
+                            <label for="email"
+                                class="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-300">Email
+                                Address</label>
+                            <input id="email" name="email" type="email" placeholder="e.g. rahul@example.com" required
+                                autocomplete="email"
+                                class="w-full border border-white/15 bg-slate-950 px-4 py-3.5 text-sm text-white placeholder-slate-400 transition duration-150 focus:border-lime-400 focus:outline-none focus:ring-1 focus:ring-lime-400">
+                        </div>
+
+                        <div>
+                            <label for="message"
+                                class="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-300">Your Goal /
+                                Inquiry</label>
+                            <textarea id="message" name="message" rows="4"
+                                placeholder="Tell us what you're looking to achieve..." required
+                                class="w-full resize-y border border-white/15 bg-slate-950 px-4 py-3.5 text-sm text-white placeholder-slate-400 transition duration-150 focus:border-lime-400 focus:outline-none focus:ring-1 focus:ring-lime-400"></textarea>
+                        </div>
+
+                        <button type="submit"
+                            class="w-full bg-lime-400 px-6 py-4 text-xs font-bold uppercase tracking-widest text-black transition duration-200 hover:bg-white focus:outline-none focus:ring-2 focus:ring-lime-400 focus:ring-offset-2 focus:ring-offset-slate-900">
+                            Send Inquiry
+                        </button>
+
+                    </form>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer class="border-t border-white/10 bg-black py-10">
+        <div
+            class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-6 text-center sm:flex-row sm:text-left lg:px-12">
+
+            <a href="#home" class="font-heading text-2xl font-extrabold uppercase tracking-wider text-white">
+                Gymso<span class="text-lime-400">.</span>
+            </a>
+
+            <p class="text-xs uppercase tracking-widest text-slate-400">
+                Train Hard &bull; Stay Consistent &bull; Elevate Standards
+            </p>
+
+            <p class="text-xs text-slate-400">
+                &copy; 2026 Gymso Fitness. All rights reserved.
+            </p>
+
+        </div>
+    </footer>
+
+    <!-- Interactive Mobile Nav Toggle Script -->
+    <script>
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const iconOpen = document.getElementById('menu-icon-open');
+        const iconClose = document.getElementById('menu-icon-close');
+
+        if (menuToggle && mobileMenu) {
+            menuToggle.addEventListener('click', () => {
+                const isHidden = mobileMenu.classList.contains('hidden');
+                if (isHidden) {
+                    mobileMenu.classList.remove('hidden');
+                    iconOpen.classList.add('hidden');
+                    iconClose.classList.remove('hidden');
+                    menuToggle.setAttribute('aria-expanded', 'true');
+                } else {
+                    mobileMenu.classList.add('hidden');
+                    iconOpen.classList.remove('hidden');
+                    iconClose.classList.add('hidden');
+                    menuToggle.setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            // Close menu on navigation click
+            mobileMenu.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                    iconOpen.classList.remove('hidden');
+                    iconClose.classList.add('hidden');
+                    menuToggle.setAttribute('aria-expanded', 'false');
+                });
+            });
+        }
+    </script>
+
+    <!-- ADVANCED ANIMATION ENGINE (GSAP + Anime.js v4 + Particle Canvas + 3D Tilt) -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Helper: Safe Anime.js / GSAP runner
+            const a = window.anime || (typeof anime !== "undefined" ? anime : null);
+            const animate = (a && a.animate) ? a.animate.bind(a) : (a || null);
+
+            // ==========================================
+            // 1. SCROLL PROGRESS BAR
+            // ==========================================
+            const scrollBar = document.getElementById("scroll-progress");
+            function updateScrollProgress() {
+                if (!scrollBar) return;
+                const scrollTop = window.scrollY || document.documentElement.scrollTop;
+                const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+                const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+                scrollBar.style.width = progress + "%";
+            }
+            window.addEventListener("scroll", updateScrollProgress, { passive: true });
+            updateScrollProgress();
+
+            // ==========================================
+            // 2. LUXURY MAGNETIC CUSTOM CURSOR & RIPPLE
+            // ==========================================
+            const cursorDot = document.getElementById("cursor-dot");
+            const cursorRing = document.getElementById("cursor-ring");
+
+            if (cursorDot && cursorRing && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+                let mouseX = -100, mouseY = -100;
+                let ringX = -100, ringY = -100;
+                let isCursorVisible = false;
+
+                window.addEventListener("mousemove", (e) => {
+                    mouseX = e.clientX;
+                    mouseY = e.clientY;
+                    if (!isCursorVisible) {
+                        cursorDot.style.opacity = "1";
+                        cursorRing.style.opacity = "1";
+                        isCursorVisible = true;
+                    }
+                    cursorDot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+                });
+
+                window.addEventListener("mouseleave", () => {
+                    cursorDot.style.opacity = "0";
+                    cursorRing.style.opacity = "0";
+                    isCursorVisible = false;
+                });
+
+                // Smooth elastic ring tracking loop (LERP)
+                function renderRing() {
+                    ringX += (mouseX - ringX) * 0.16;
+                    ringY += (mouseY - ringY) * 0.16;
+                    cursorRing.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
+                    requestAnimationFrame(renderRing);
+                }
+                requestAnimationFrame(renderRing);
+
+                // Hover state expansion
+                const interactiveElements = document.querySelectorAll("a, button, input, textarea, .spotlight-card");
+                interactiveElements.forEach((el) => {
+                    el.addEventListener("mouseenter", () => cursorRing.classList.add("active-hover"));
+                    el.addEventListener("mouseleave", () => cursorRing.classList.remove("active-hover"));
+                });
+
+                // Click Ripple Shockwave
+                window.addEventListener("click", (e) => {
+                    const ripple = document.createElement("div");
+                    ripple.className = "click-ripple";
+                    ripple.style.left = e.clientX + "px";
+                    ripple.style.top = e.clientY + "px";
+                    ripple.style.width = "40px";
+                    ripple.style.height = "40px";
+                    document.body.appendChild(ripple);
+                    setTimeout(() => ripple.remove(), 600);
+                });
+            }
+
+            // ==========================================
+            // 3. MAGNETIC BUTTON PULL EFFECT
+            // ==========================================
+            const magneticButtons = document.querySelectorAll(".magnetic-btn, .hero-button");
+            magneticButtons.forEach((btn) => {
+                btn.addEventListener("mousemove", (e) => {
+                    const rect = btn.getBoundingClientRect();
+                    const x = e.clientX - rect.left - rect.width / 2;
+                    const y = e.clientY - rect.top - rect.height / 2;
+                    btn.style.transform = `translate(${x * 0.22}px, ${y * 0.22}px)`;
+                });
+                btn.addEventListener("mouseleave", () => {
+                    btn.style.transition = "transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)";
+                    btn.style.transform = "translate(0px, 0px)";
+                    setTimeout(() => {
+                        btn.style.transition = "";
+                    }, 400);
+                });
+            });
+
+            // ==========================================
+            // 4. INTERACTIVE HERO PARTICLE CANVAS
+            // ==========================================
+            const heroCanvas = document.getElementById("hero-particles");
+            if (heroCanvas) {
+                const ctx = heroCanvas.getContext("2d");
+                let width = (heroCanvas.width = heroCanvas.offsetWidth || window.innerWidth);
+                let height = (heroCanvas.height = heroCanvas.offsetHeight || window.innerHeight);
+
+                window.addEventListener("resize", () => {
+                    width = heroCanvas.width = heroCanvas.offsetWidth || window.innerWidth;
+                    height = heroCanvas.height = heroCanvas.offsetHeight || window.innerHeight;
+                });
+
+                let mousePos = { x: -1000, y: -1000 };
+                const heroSection = document.getElementById("home");
+                if (heroSection) {
+                    heroSection.addEventListener("mousemove", (e) => {
+                        const rect = heroCanvas.getBoundingClientRect();
+                        mousePos.x = e.clientX - rect.left;
+                        mousePos.y = e.clientY - rect.top;
+                    });
+                    heroSection.addEventListener("mouseleave", () => {
+                        mousePos.x = -1000;
+                        mousePos.y = -1000;
+                    });
+                }
+
+                const particleCount = Math.min(65, Math.floor(window.innerWidth / 20));
+                const particles = [];
+                for (let i = 0; i < particleCount; i++) {
+                    particles.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        vx: (Math.random() - 0.5) * 0.7,
+                        vy: (Math.random() - 0.5) * 0.7,
+                        radius: Math.random() * 2 + 1,
+                        color: Math.random() > 0.35 ? "#a3e635" : "#38bdf8",
+                        alpha: Math.random() * 0.6 + 0.2
+                    });
+                }
+
+                function drawParticles() {
+                    ctx.clearRect(0, 0, width, height);
+
+                    for (let i = 0; i < particles.length; i++) {
+                        const p = particles[i];
+
+                        // Mouse repulsion/interaction
+                        const dx = p.x - mousePos.x;
+                        const dy = p.y - mousePos.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 120 && dist > 0) {
+                            const force = (120 - dist) / 120;
+                            p.x += (dx / dist) * force * 3;
+                            p.y += (dy / dist) * force * 3;
+                        }
+
+                        // Position update
+                        p.x += p.vx;
+                        p.y += p.vy;
+
+                        if (p.x < 0) p.x = width;
+                        if (p.x > width) p.x = 0;
+                        if (p.y < 0) p.y = height;
+                        if (p.y > height) p.y = 0;
+
+                        // Draw Particle
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                        ctx.fillStyle = p.color;
+                        ctx.globalAlpha = p.alpha;
+                        ctx.shadowBlur = 10;
+                        ctx.shadowColor = p.color;
+                        ctx.fill();
+
+                        // Connect close particles with energy cords
+                        for (let j = i + 1; j < particles.length; j++) {
+                            const p2 = particles[j];
+                            const d = Math.hypot(p.x - p2.x, p.y - p2.y);
+                            if (d < 90) {
+                                ctx.beginPath();
+                                ctx.moveTo(p.x, p.y);
+                                ctx.lineTo(p2.x, p2.y);
+                                ctx.strokeStyle = "#a3e635";
+                                ctx.globalAlpha = (1 - d / 90) * 0.18;
+                                ctx.lineWidth = 0.8;
+                                ctx.stroke();
+                            }
+                        }
+                    }
+                    ctx.globalAlpha = 1;
+                    ctx.shadowBlur = 0;
+                    requestAnimationFrame(drawParticles);
+                }
+                requestAnimationFrame(drawParticles);
+            }
+
+            // ==========================================
+            // 5. 3D GYRO TILT & SPOTLIGHT ON ALL CARDS
+            // ==========================================
+            const cards = document.querySelectorAll(".spotlight-card");
+            cards.forEach((card) => {
+                card.addEventListener("mousemove", (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+
+                    // Update spotlight CSS variables
+                    card.style.setProperty("--mouse-x", `${x}px`);
+                    card.style.setProperty("--mouse-y", `${y}px`);
+
+                    // 3D Tilt calculation
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = ((y - centerY) / centerY) * -8;
+                    const rotateY = ((x - centerX) / centerX) * 8;
+
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(1.02, 1.02, 1.02)`;
+                });
+
+                card.addEventListener("mouseleave", () => {
+                    card.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)";
+                    card.style.setProperty("--mouse-x", `-9999px`);
+                    card.style.setProperty("--mouse-y", `-9999px`);
+                });
+            });
+
+            // ==========================================
+            // 6. GSAP / ANIME.JS HERO ENTRANCE
+            // ==========================================
+            if (typeof gsap !== "undefined") {
+                const tl = gsap.timeline();
+                tl.from(".hero-badge", {
+                    scale: 0.8,
+                    opacity: 0,
+                    duration: 0.8,
+                    ease: "back.out(1.7)"
+                })
+                .from(".hero-word", {
+                    y: 70,
+                    opacity: 0,
+                    rotationX: -40,
+                    duration: 0.9,
+                    stagger: 0.12,
+                    ease: "power3.out"
+                }, "-=0.4")
+                .from(".hero-description", {
+                    y: 30,
+                    opacity: 0,
+                    duration: 0.8,
+                    ease: "power2.out"
+                }, "-=0.5")
+                .from(".hero-button", {
+                    y: 20,
+                    opacity: 0,
+                    scale: 0.95,
+                    duration: 0.6,
+                    stagger: 0.15,
+                    ease: "back.out(1.4)"
+                }, "-=0.3");
+            } else if (animate) {
+                animate(".hero-word", {
+                    opacity: [0, 1],
+                    y: [50, 0],
+                    delay: (a.stagger ? a.stagger(120) : 100),
+                    duration: 900,
+                    ease: "outExpo"
+                });
+            }
+
+            // ==========================================
+            // 7. ROLLING STAT COUNTERS
+            // ==========================================
+            function runCounters() {
+                const stats = [
+                    { id: "counter-classes", target: 35 },
+                    { id: "counter-coached", target: 100 }
+                ];
+                stats.forEach(({ id, target }) => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        const obj = { val: 0 };
+                        if (animate) {
+                            animate(obj, {
+                                val: target,
+                                duration: 2200,
+                                delay: 500,
+                                ease: "outExpo",
+                                onUpdate: () => {
+                                    el.textContent = Math.round(obj.val);
+                                }
+                            });
+                        } else {
+                            let curr = 0;
+                            const step = target / 50;
+                            const timer = setInterval(() => {
+                                curr += step;
+                                if (curr >= target) {
+                                    el.textContent = target;
+                                    clearInterval(timer);
+                                } else {
+                                    el.textContent = Math.round(curr);
+                                }
+                            }, 30);
+                        }
+                    }
+                });
+            }
+            runCounters();
+
+            // ==========================================
+            // 8. LIVE BPM PULSE & INTERACTIVE BOOST ⚡
+            // ==========================================
+            const liveBpmEl = document.getElementById("live-bpm");
+            const boostBtn = document.getElementById("boost-btn");
+            const pulseGlow = document.getElementById("metrics-pulse-glow");
+
+            // Realistic BPM fluctuation
+            if (liveBpmEl) {
+                setInterval(() => {
+                    if (!liveBpmEl.dataset.boosted) {
+                        const randomBpm = 136 + Math.floor(Math.random() * 7);
+                        liveBpmEl.textContent = randomBpm;
+                    }
+                }, 3000);
+            }
+
+            // Interactive Energy Boost trigger
+            if (boostBtn && liveBpmEl) {
+                boostBtn.addEventListener("click", () => {
+                    liveBpmEl.dataset.boosted = "true";
+                    liveBpmEl.textContent = "182";
+                    liveBpmEl.classList.add("text-lime-400");
+
+                    // Pulse glow surge
+                    if (pulseGlow) {
+                        pulseGlow.classList.remove("bg-lime-500/10");
+                        pulseGlow.classList.add("bg-lime-400/40", "scale-150");
+                    }
+
+                    // Athletic Spark Confetti explosion
+                    if (typeof confetti === "function") {
+                        confetti({
+                            particleCount: 75,
+                            spread: 70,
+                            origin: { y: 0.7 },
+                            colors: ["#a3e635", "#ffffff", "#38bdf8", "#4ade80"]
+                        });
+                    }
+
+                    // Button reaction
+                    boostBtn.textContent = "BOOSTED! 🔥";
+                    boostBtn.classList.add("bg-lime-400", "text-black");
+
+                    // Gradually settle back
+                    setTimeout(() => {
+                        liveBpmEl.textContent = "140";
+                        delete liveBpmEl.dataset.boosted;
+                        liveBpmEl.classList.remove("text-lime-400");
+                        boostBtn.textContent = "Boost ⚡";
+                        boostBtn.classList.remove("bg-lime-400", "text-black");
+                        if (pulseGlow) {
+                            pulseGlow.classList.remove("bg-lime-400/40", "scale-150");
+                            pulseGlow.classList.add("bg-lime-500/10");
+                        }
+                    }, 4000);
+                });
+            }
+
+            // ==========================================
+            // 9. INTERACTIVE BILLING SWITCHER (Monthly/Annual)
+            // ==========================================
+            const billingToggle = document.getElementById("billing-toggle");
+            const toggleKnob = document.getElementById("toggle-knob");
+            const btnMonthly = document.getElementById("btn-monthly");
+            const btnAnnual = document.getElementById("btn-annual");
+
+            const priceBasic = document.getElementById("price-basic");
+            const priceAthlete = document.getElementById("price-athlete");
+            const priceElite = document.getElementById("price-elite");
+
+            let isAnnual = false;
+            const pricing = {
+                monthly: { basic: 999, athlete: 1999, elite: 3499 },
+                annual: { basic: 799, athlete: 1599, elite: 2799 }
+            };
+
+            function updatePricing(annual) {
+                isAnnual = annual;
+                const target = isAnnual ? pricing.annual : pricing.monthly;
+
+                if (toggleKnob) {
+                    toggleKnob.style.transform = isAnnual ? "translateX(28px)" : "translateX(0px)";
+                }
+                if (btnMonthly && btnAnnual) {
+                    btnMonthly.className = isAnnual
+                        ? "text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-white transition"
+                        : "text-xs font-bold uppercase tracking-wider text-lime-400 transition";
+                    btnAnnual.className = isAnnual
+                        ? "text-xs font-bold uppercase tracking-wider text-lime-400 transition"
+                        : "text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-white transition";
+                }
+
+                // Animate numbers
+                [
+                    { el: priceBasic, to: target.basic },
+                    { el: priceAthlete, to: target.athlete },
+                    { el: priceElite, to: target.elite }
+                ].forEach(({ el, to }) => {
+                    if (!el) return;
+                    if (animate) {
+                        const current = parseInt(el.textContent.replace(/\D/g, "")) || 0;
+                        const obj = { val: current };
+                        animate(obj, {
+                            val: to,
+                            duration: 700,
+                            ease: "outExpo",
+                            onUpdate: () => {
+                                el.textContent = `₹${Math.round(obj.val).toLocaleString("en-IN")}`;
+                            }
+                        });
+                    } else {
+                        el.textContent = `₹${to.toLocaleString("en-IN")}`;
+                    }
+                });
+            }
+
+            if (billingToggle) {
+                billingToggle.addEventListener("click", () => updatePricing(!isAnnual));
+            }
+            if (btnMonthly) btnMonthly.addEventListener("click", () => updatePricing(false));
+            if (btnAnnual) btnAnnual.addEventListener("click", () => updatePricing(true));
+
+            // ==========================================
+            // 10. INTERACTIVE CLASSES CATEGORY FILTER
+            // ==========================================
+            const filterButtons = document.querySelectorAll(".class-filter-btn");
+            const classCards = document.querySelectorAll("#classes-grid article");
+
+            filterButtons.forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    filterButtons.forEach((b) => {
+                        b.classList.remove("active", "border-lime-400", "bg-lime-400", "text-black");
+                        b.classList.add("border-transparent", "text-slate-400");
+                    });
+                    btn.classList.add("active", "border-lime-400", "bg-lime-400", "text-black");
+                    btn.classList.remove("border-transparent", "text-slate-400");
+
+                    const filter = btn.dataset.filter;
+                    classCards.forEach((card) => {
+                        const category = card.dataset.category;
+                        const shouldShow = filter === "all" || category === filter;
+
+                        if (shouldShow) {
+                            card.style.display = "flex";
+                            if (animate) {
+                                animate(card, {
+                                    opacity: [0, 1],
+                                    scale: [0.92, 1],
+                                    y: [25, 0],
+                                    duration: 500,
+                                    ease: "outExpo"
+                                });
+                            }
+                        } else {
+                            if (animate) {
+                                animate(card, {
+                                    opacity: [1, 0],
+                                    scale: [1, 0.92],
+                                    duration: 300,
+                                    ease: "outQuad",
+                                    onComplete: () => {
+                                        card.style.display = "none";
+                                    }
+                                });
+                            } else {
+                                card.style.display = "none";
+                            }
+                        }
+                    });
+                });
+            });
+
+            // ==========================================
+            // 11. SCROLL-TRIGGERED STAGGER REVEALS
+            // ==========================================
+            const cardObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        const sectionCards = entry.target.querySelectorAll(".anime-card");
+                        if (sectionCards.length > 0 && animate) {
+                            animate(sectionCards, {
+                                opacity: [0, 1],
+                                y: [45, 0],
+                                duration: 800,
+                                delay: a && a.stagger ? a.stagger(130) : 100,
+                                ease: "outExpo"
+                            });
+                        }
+                        cardObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll("#classes, #trainers, #membership, #about").forEach((sec) => {
+                cardObserver.observe(sec);
+            });
+
+            // ==========================================
+            // 12. PARALLAX EFFECT ON ABOUT ATHLETE IMAGE
+            // ==========================================
+            const aboutImg = document.querySelector("#about img");
+            if (aboutImg) {
+                window.addEventListener("scroll", () => {
+                    const rect = aboutImg.getBoundingClientRect();
+                    if (rect.top < window.innerHeight && rect.bottom > 0) {
+                        const speed = 0.08;
+                        const yPos = (window.innerHeight - rect.top) * speed - 20;
+                        aboutImg.style.transform = `translateY(${yPos.toFixed(1)}px)`;
+                    }
+                }, { passive: true });
+            }
+
+            // ==========================================
+            // 13. INTERACTIVE CONTACT FORM SUBMISSION
+            // ==========================================
+            const contactForm = document.querySelector("#contact form");
+            if (contactForm) {
+                contactForm.addEventListener("submit", (e) => {
+                    // Celebrate form submission with spark confetti
+                    if (typeof confetti === "function") {
+                        confetti({
+                            particleCount: 90,
+                            spread: 80,
+                            origin: { y: 0.6 },
+                            colors: ["#a3e635", "#ffffff", "#4ade80"]
+                        });
+                    }
+                });
+            }
+        });
+    </script>
+
+</body>
+
+</html>

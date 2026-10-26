@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# AI Assistant configs & skill folders
+.agent/
+.agents/
+.claude/
+.codex/
+.gemini/
+.impeccable/
+
+# Build and environment files
+dist/
+build/
+.env
+.env.local
+.env.*.local
+
+# Editor / OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
